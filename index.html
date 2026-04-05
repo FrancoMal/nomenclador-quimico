@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Practica nomenclatura inorgánica con ejercicios interactivos. Fórmulas, nombres, quiz y más.">
+  <title>Nomenclador Químico</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- HEADER GLOBAL                               -->
+  <!-- ═══════════════════════════════════════════ -->
+  <header class="header-global">
+    <div class="header-global__inner">
+      <span class="header-global__brand">Nomenclador Químico</span>
+      <button id="btn-dark-mode" class="btn-icon" aria-label="Alternar modo oscuro" title="Alternar modo oscuro">
+        <span class="icon-light">☀️</span>
+        <span class="icon-dark">🌙</span>
+      </button>
+    </div>
+  </header>
+
+  <main>
+    <!-- ═══════════════════════════════════════════ -->
+    <!-- PANTALLA DE INICIO                          -->
+    <!-- ═══════════════════════════════════════════ -->
+    <section id="pantalla-inicio" class="screen visible">
+      <div class="container">
+
+        <!-- Hero -->
+        <div class="hero">
+          <h1 class="hero__title">Nomenclador Químico</h1>
+          <p class="hero__subtitle">Practica nomenclatura inorgánica</p>
+        </div>
+
+        <!-- Mode selection grid -->
+        <div class="mode-grid">
+
+          <button class="mode-card" id="modo-formula-nombre" data-mode="formula-nombre">
+            <span class="mode-card__icon" aria-hidden="true">🧪</span>
+            <h2 class="mode-card__title">Fórmula → Nombre</h2>
+            <p class="mode-card__desc">Escribe el nombre del compuesto a partir de su fórmula</p>
+          </button>
+
+          <button class="mode-card" id="modo-nombre-formula" data-mode="nombre-formula">
+            <span class="mode-card__icon" aria-hidden="true">✏️</span>
+            <h2 class="mode-card__title">Nombre → Fórmula</h2>
+            <p class="mode-card__desc">Escribe la fórmula a partir del nombre del compuesto</p>
+          </button>
+
+          <button class="mode-card" id="modo-quiz-formula" data-mode="quiz-formula">
+            <span class="mode-card__icon" aria-hidden="true">🎯</span>
+            <h2 class="mode-card__title">Quiz Fórmula → Nombre</h2>
+            <p class="mode-card__desc">Elige el nombre correcto entre 4 opciones</p>
+          </button>
+
+          <button class="mode-card" id="modo-quiz-nombre" data-mode="quiz-nombre">
+            <span class="mode-card__icon" aria-hidden="true">🧩</span>
+            <h2 class="mode-card__title">Quiz Nombre → Fórmula</h2>
+            <p class="mode-card__desc">Elige la fórmula correcta entre 4 opciones</p>
+          </button>
+
+        </div>
+
+        <!-- Configuration (collapsible) -->
+        <div class="config-wrapper">
+          <button id="btn-config-toggle" class="config-toggle" aria-expanded="false" aria-controls="config-panel">
+            <span class="config-toggle__icon">⚙️</span>
+            <span class="config-toggle__text">Configuración</span>
+            <span class="config-toggle__arrow" aria-hidden="true">▼</span>
+          </button>
+
+          <div id="config-panel" class="config-panel" aria-hidden="true">
+
+            <!-- Difficulty -->
+            <fieldset class="config-group">
+              <legend class="config-group__legend">Dificultad</legend>
+              <div class="btn-group" role="radiogroup" aria-label="Dificultad">
+                <button class="btn-group__item" role="radio" aria-checked="false" data-difficulty="facil">Fácil</button>
+                <button class="btn-group__item active" role="radio" aria-checked="true" data-difficulty="medio">Medio</button>
+                <button class="btn-group__item" role="radio" aria-checked="false" data-difficulty="dificil">Difícil</button>
+              </div>
+            </fieldset>
+
+            <!-- Nomenclature system -->
+            <fieldset class="config-group">
+              <legend class="config-group__legend">Sistema de nomenclatura</legend>
+              <div class="btn-group" role="radiogroup" aria-label="Sistema de nomenclatura">
+                <button class="btn-group__item" role="radio" aria-checked="false" data-system="sistematica">Sistemática</button>
+                <button class="btn-group__item" role="radio" aria-checked="false" data-system="stock">Stock</button>
+                <button class="btn-group__item" role="radio" aria-checked="false" data-system="tradicional">Tradicional</button>
+                <button class="btn-group__item active" role="radio" aria-checked="true" data-system="aleatorio">Aleatorio</button>
+              </div>
+            </fieldset>
+
+            <!-- Compound types -->
+            <fieldset class="config-group">
+              <legend class="config-group__legend">Tipos de compuestos</legend>
+              <div class="checkbox-grid">
+                <label class="checkbox-label">
+                  <input type="checkbox" name="tipo-compuesto" value="oxidos-basicos" checked>
+                  <span class="checkbox-custom"></span>
+                  <span>Óxidos básicos</span>
+                </label>
+                <label class="checkbox-label">
+                  <input type="checkbox" name="tipo-compuesto" value="oxidos-acidos" checked>
+                  <span class="checkbox-custom"></span>
+                  <span>Óxidos ácidos</span>
+                </label>
+                <label class="checkbox-label">
+                  <input type="checkbox" name="tipo-compuesto" value="hidruros" checked>
+                  <span class="checkbox-custom"></span>
+                  <span>Hidruros</span>
+                </label>
+                <label class="checkbox-label">
+                  <input type="checkbox" name="tipo-compuesto" value="hidracidos" checked>
+                  <span class="checkbox-custom"></span>
+                  <span>Hidrácidos</span>
+                </label>
+                <label class="checkbox-label">
+                  <input type="checkbox" name="tipo-compuesto" value="hidroxidos" checked>
+                  <span class="checkbox-custom"></span>
+                  <span>Hidróxidos</span>
+                </label>
+                <label class="checkbox-label">
+                  <input type="checkbox" name="tipo-compuesto" value="sales-binarias" checked>
+                  <span class="checkbox-custom"></span>
+                  <span>Sales binarias</span>
+                </label>
+                <label class="checkbox-label">
+                  <input type="checkbox" name="tipo-compuesto" value="oxoacidos" checked>
+                  <span class="checkbox-custom"></span>
+                  <span>Oxoácidos</span>
+                </label>
+              </div>
+            </fieldset>
+
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════ -->
+    <!-- PANTALLA DE JUEGO                           -->
+    <!-- ═══════════════════════════════════════════ -->
+    <section id="pantalla-juego" class="screen hidden">
+
+      <!-- Game header / stats bar -->
+      <div class="game-header">
+        <div class="game-header__inner">
+          <button id="btn-volver" class="btn btn--text" aria-label="Volver al inicio">
+            <span aria-hidden="true">←</span> Volver
+          </button>
+          <span id="modo-actual" class="game-header__mode">Modo</span>
+          <div class="game-header__stats">
+            <span class="stat stat--correct">Aciertos: <strong id="stat-aciertos">0</strong></span>
+            <span class="stat stat--wrong">Errores: <strong id="stat-errores">0</strong></span>
+            <span class="stat stat--streak">Racha: <strong id="stat-racha">0</strong></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="container game-body">
+
+        <!-- Question area -->
+        <div id="zona-pregunta" class="question-card">
+          <p class="question-card__label">Compuesto:</p>
+          <p id="texto-pregunta" class="question-card__text formula-display"></p>
+        </div>
+
+        <!-- Answer area -->
+        <div id="zona-respuesta" class="answer-area">
+
+          <!-- Text input (modes 1 & 2) -->
+          <div id="respuesta-texto" class="answer-text">
+            <div class="input-wrapper">
+              <input
+                type="text"
+                id="input-respuesta"
+                class="input-respuesta"
+                placeholder="Escribe tu respuesta..."
+                autocomplete="off"
+                autocapitalize="off"
+                spellcheck="false"
+              >
+              <button id="btn-comprobar" class="btn btn--primary">Comprobar</button>
+            </div>
+            <p id="helper-sistema" class="helper-text">Sistema: <span id="sistema-nombre">Aleatorio</span></p>
+            <div id="helper-chars" class="special-chars" aria-label="Caracteres especiales">
+              <button class="char-btn" data-char="₂" type="button">₂</button>
+              <button class="char-btn" data-char="₃" type="button">₃</button>
+              <button class="char-btn" data-char="₄" type="button">₄</button>
+              <button class="char-btn" data-char="₅" type="button">₅</button>
+              <button class="char-btn" data-char="₆" type="button">₆</button>
+              <button class="char-btn" data-char="₇" type="button">₇</button>
+            </div>
+          </div>
+
+          <!-- Quiz options (modes 3 & 4) -->
+          <div id="respuesta-quiz" class="answer-quiz hidden">
+            <div class="quiz-grid">
+              <button class="opcion-quiz" data-index="0"></button>
+              <button class="opcion-quiz" data-index="1"></button>
+              <button class="opcion-quiz" data-index="2"></button>
+              <button class="opcion-quiz" data-index="3"></button>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Feedback area -->
+        <div id="zona-feedback" class="feedback hidden">
+          <div id="feedback-contenido" class="feedback__content">
+            <p id="feedback-resultado" class="feedback__result"></p>
+            <p id="feedback-correccion" class="feedback__correction"></p>
+          </div>
+          <button id="btn-siguiente" class="btn btn--primary btn--wide">Siguiente</button>
+        </div>
+
+        <!-- Progress indicator -->
+        <div class="progress-indicator">
+          <span id="progreso-texto">Pregunta <strong id="pregunta-num">1</strong></span>
+        </div>
+
+      </div>
+    </section>
+  </main>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- MODAL DE RESULTADOS                         -->
+  <!-- ═══════════════════════════════════════════ -->
+  <div id="modal-resultados" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="modal-titulo">
+    <div class="modal">
+      <h2 id="modal-titulo" class="modal__title">Resultados</h2>
+      <div class="modal__stats">
+        <div class="modal-stat">
+          <span class="modal-stat__value" id="res-total">0</span>
+          <span class="modal-stat__label">Preguntas</span>
+        </div>
+        <div class="modal-stat modal-stat--correct">
+          <span class="modal-stat__value" id="res-aciertos">0</span>
+          <span class="modal-stat__label">Aciertos</span>
+        </div>
+        <div class="modal-stat modal-stat--wrong">
+          <span class="modal-stat__value" id="res-errores">0</span>
+          <span class="modal-stat__label">Errores</span>
+        </div>
+        <div class="modal-stat modal-stat--percent">
+          <span class="modal-stat__value" id="res-porcentaje">0%</span>
+          <span class="modal-stat__label">Porcentaje</span>
+        </div>
+        <div class="modal-stat modal-stat--streak">
+          <span class="modal-stat__value" id="res-racha">0</span>
+          <span class="modal-stat__label">Mejor racha</span>
+        </div>
+      </div>
+      <div class="modal__actions">
+        <button id="btn-modal-inicio" class="btn btn--secondary">Volver al inicio</button>
+        <button id="btn-modal-replay" class="btn btn--primary">Jugar de nuevo</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- FOOTER                                      -->
+  <!-- ═══════════════════════════════════════════ -->
+  <footer class="footer">
+    <p>Nomenclador Químico &mdash; Practica y aprende</p>
+    <p><a href="https://github.com/FrancoMal" target="_blank" rel="noopener noreferrer">@FrancoMal</a></p>
+  </footer>
+
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>
