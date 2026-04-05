@@ -514,6 +514,7 @@ function manejarVolver() {
 function manejarTeclaInput(e) {
   if (e.key === 'Enter') {
     e.preventDefault();
+    e.stopPropagation();
     if (esperandoSiguiente) {
       siguiente();
     } else {
