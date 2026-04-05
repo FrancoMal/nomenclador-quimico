@@ -103,16 +103,22 @@ export class Juego {
 
     // Determine nomenclature system for this question
     let sistema = this.sistemaNomenclatura;
-    if (sistema === 'aleatorio') {
+    const esTodas = sistema === 'todas';
+    if (sistema === 'aleatorio' || sistema === 'todas') {
       sistema = elegirAleatorio(SISTEMAS);
     }
-    this.sistemaActual = sistema;
+    this.sistemaActual = esTodas ? 'todas' : sistema;
 
     const nombre = compuesto.nombres[sistema];
     let pregunta;
     let respuestaCorrecta;
     let respuestaCorrectaHTML = null;
     let opciones = null;
+
+    // Build formatted string with all 3 names for "todas" mode
+    const todosLosNombres = esTodas
+      ? `Sist: ${compuesto.nombres.sistematica}\nStock: ${compuesto.nombres.stock}\nTrad: ${compuesto.nombres.tradicional}`
+      : null;
 
     switch (this.modo) {
       case 'formula-nombre':
@@ -123,7 +129,7 @@ export class Juego {
 
       case 'nombre-formula':
         // Show name, user types the formula
-        pregunta = nombre;
+        pregunta = esTodas ? todosLosNombres : nombre;
         respuestaCorrecta = compuesto.formula;
         break;
 
@@ -138,7 +144,7 @@ export class Juego {
 
       case 'quiz-nombre': {
         // Show name, user picks the correct formula from 4 options
-        pregunta = nombre;
+        pregunta = esTodas ? todosLosNombres : nombre;
         respuestaCorrecta = compuesto.formula;
         respuestaCorrectaHTML = compuesto.formulaHTML;
         const distractoresFormula = generarDistractores(compuesto, 'formula', 3);
@@ -158,7 +164,7 @@ export class Juego {
     return {
       pregunta,
       respuestaCorrecta,
-      sistema,
+      sistema: this.sistemaActual,
       compuesto,
       opciones
     };
@@ -189,6 +195,12 @@ export class Juego {
       } else {
         correcto = verificarRespuesta(respuesta, this.respuestaCorrecta);
       }
+    } else if (this.sistemaActual === 'todas' && this.modo === 'formula-nombre') {
+      // In "todas" mode for formula→nombre, accept any of the 3 system names
+      const nombres = this.compuestoActual.nombres;
+      correcto = verificarRespuesta(respuesta, nombres.sistematica)
+        || verificarRespuesta(respuesta, nombres.stock)
+        || verificarRespuesta(respuesta, nombres.tradicional);
     } else {
       correcto = verificarRespuesta(respuesta, this.respuestaCorrecta);
     }

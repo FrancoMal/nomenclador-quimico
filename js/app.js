@@ -81,7 +81,8 @@ const NOMBRES_SISTEMA = {
   'sistematica': 'Sistemática',
   'stock': 'Stock',
   'tradicional': 'Tradicional',
-  'aleatorio': 'Aleatorio'
+  'aleatorio': 'Aleatorio',
+  'todas': 'Todas'
 };
 
 // =============================================================================
@@ -289,7 +290,12 @@ function cargarPregunta() {
   }
 
   // Display question (use innerHTML for formulas with <sub> tags)
-  textoPregunta.innerHTML = datos.pregunta;
+  // For "todas" mode in nombre→formula, pregunta has \n separators
+  if (datos.pregunta.includes('\n')) {
+    textoPregunta.innerHTML = datos.pregunta.replace(/\n/g, '<br>');
+  } else {
+    textoPregunta.innerHTML = datos.pregunta;
+  }
 
   // Update system name
   sistemaNombre.textContent = NOMBRES_SISTEMA[datos.sistema] || datos.sistema;
@@ -363,28 +369,33 @@ function comprobar() {
   // Show feedback
   zonaFeedback.classList.remove('hidden');
 
+  // Build reference text showing all 3 names (for "todas" mode)
+  const esTodas = juego.sistemaActual === 'todas';
+  let referenciaHTML = '';
+  if (esTodas && juego.compuestoActual) {
+    const n = juego.compuestoActual.nombres;
+    referenciaHTML = '<br><small><b>Sist:</b> ' + n.sistematica + ' · <b>Stock:</b> ' + n.stock + ' · <b>Trad:</b> ' + n.tradicional + '</small>';
+  }
+
   if (resultado.correcto) {
     feedbackResultado.textContent = '✅ ¡Correcto!';
     feedbackResultado.classList.add('correct-animation');
-    feedbackCorreccion.innerHTML = '';
+    feedbackCorreccion.innerHTML = referenciaHTML;
   } else {
     feedbackResultado.textContent = '❌ Incorrecto';
     feedbackResultado.classList.add('wrong-animation');
 
     // Show correct answer
-    // For formula answers (nombre-formula mode), show the plain formula so user knows what to type
     if (juego.esFormulaInput && resultado.respuestaCorrectaHTML) {
-      // In quiz-nombre mode, show both HTML and plain text
       feedbackCorreccion.innerHTML =
         'La respuesta correcta es: <strong>' + resultado.respuestaCorrectaHTML + '</strong>' +
         ' (' + resultado.respuestaCorrecta + ')';
     } else if (juego.esFormulaInput) {
-      // nombre-formula text mode: show plain formula
       feedbackCorreccion.innerHTML =
         'La respuesta correcta es: <strong>' + resultado.respuestaCorrecta + '</strong>';
     } else {
       feedbackCorreccion.innerHTML =
-        'La respuesta correcta es: <strong>' + resultado.respuestaCorrecta + '</strong>';
+        'La respuesta correcta es: <strong>' + resultado.respuestaCorrecta + '</strong>' + referenciaHTML;
     }
   }
 

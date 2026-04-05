@@ -833,6 +833,18 @@ body.dark-mode .game-header {
   word-break: break-word;
 }
 
+.question-card__text br + br {
+  display: none;
+}
+
+.question-card__text small {
+  font-size: var(--fs-base);
+  font-weight: var(--fw-normal);
+  color: var(--color-text-secondary);
+  display: block;
+  margin-top: var(--sp-1);
+}
+
 /* Formula display styling */
 .formula-display {
   font-family: var(--font-family);
@@ -1214,6 +1226,16 @@ body.dark-mode .modal-overlay {
 
 .footer a:hover {
   text-decoration: underline;
+}
+
+.footer .report-link {
+  color: var(--color-text-muted);
+  font-weight: 400;
+  font-size: 0.8rem;
+}
+
+.footer .report-link:hover {
+  color: var(--color-primary);
 }
 
 
