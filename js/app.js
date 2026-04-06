@@ -199,6 +199,61 @@ function activarBotonGrupo(btn) {
 
   btn.classList.add('active');
   btn.setAttribute('aria-checked', 'true');
+  guardarConfiguracion();
+}
+
+// =============================================================================
+// CONFIGURATION PERSISTENCE
+// =============================================================================
+
+function guardarConfiguracion() {
+  const btnDif = $('.btn-group__item.active[data-difficulty]');
+  const btnSis = $('.btn-group__item.active[data-system]');
+  const checkboxes = $$('input[name="tipo-compuesto"]');
+
+  const config = {
+    dificultad: btnDif ? btnDif.dataset.difficulty : 'medio',
+    sistema: btnSis ? btnSis.dataset.system : 'aleatorio',
+    tipos: {}
+  };
+
+  checkboxes.forEach((cb) => {
+    config.tipos[cb.value] = cb.checked;
+  });
+
+  localStorage.setItem('nomencladorConfig', JSON.stringify(config));
+}
+
+function cargarConfiguracion() {
+  const raw = localStorage.getItem('nomencladorConfig');
+  if (!raw) return;
+
+  try {
+    const config = JSON.parse(raw);
+
+    // Difficulty
+    if (config.dificultad) {
+      const btn = $(`.btn-group__item[data-difficulty="${config.dificultad}"]`);
+      if (btn) activarBotonGrupo(btn);
+    }
+
+    // System
+    if (config.sistema) {
+      const btn = $(`.btn-group__item[data-system="${config.sistema}"]`);
+      if (btn) activarBotonGrupo(btn);
+    }
+
+    // Compound types
+    if (config.tipos) {
+      $$('input[name="tipo-compuesto"]').forEach((cb) => {
+        if (config.tipos[cb.value] !== undefined) {
+          cb.checked = config.tipos[cb.value];
+        }
+      });
+    }
+  } catch (e) {
+    // Invalid stored config, ignore
+  }
 }
 
 // =============================================================================
@@ -552,8 +607,14 @@ function manejarTeclaGlobal(e) {
 // =============================================================================
 
 function init() {
-  // Dark mode preference
+  // Load saved preferences
   cargarPreferenciaDarkMode();
+  cargarConfiguracion();
+
+  // Save config when checkboxes change
+  $$('input[name="tipo-compuesto"]').forEach((cb) => {
+    cb.addEventListener('change', guardarConfiguracion);
+  });
 
   // Dark mode toggle
   if (btnDarkMode) {
