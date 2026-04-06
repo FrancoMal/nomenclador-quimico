@@ -288,7 +288,7 @@ export const ELEMENTOS = {
     valencias: [3, 5],
     valenciasNegativas: [-3],
     tipo: 'no_metal',
-    raizAcida: 'fosfor',
+    raizAcida: 'fosf',
     raizOxoacido: { 1: 'hipofosforoso', 3: 'fosforoso', 5: 'fosfórico' }
   },
   C: {
