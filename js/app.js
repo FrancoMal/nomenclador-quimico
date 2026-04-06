@@ -645,6 +645,60 @@ function init() {
       }
     });
   }
+
+  // Report error modal
+  const btnAbrirReporte = $('#btn-abrir-reporte');
+  const modalReporte = $('#modal-reporte');
+  const btnCerrarReporte = $('#btn-cerrar-reporte');
+  const formReporte = $('#form-reporte');
+
+  if (btnAbrirReporte && modalReporte) {
+    btnAbrirReporte.addEventListener('click', () => {
+      modalReporte.classList.remove('hidden');
+      // Pre-fill compound if we're in a game
+      const inputCompuesto = $('#reporte-compuesto');
+      if (juego && juego.compuestoActual && inputCompuesto) {
+        inputCompuesto.value = juego.compuestoActual.formula;
+      }
+    });
+
+    btnCerrarReporte.addEventListener('click', () => {
+      modalReporte.classList.add('hidden');
+    });
+
+    modalReporte.addEventListener('click', (e) => {
+      if (e.target === modalReporte) {
+        modalReporte.classList.add('hidden');
+      }
+    });
+
+    formReporte.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const compuesto = $('#reporte-compuesto').value.trim();
+      const sistema = $('#reporte-sistema').value;
+      const descripcion = $('#reporte-descripcion').value.trim();
+
+      if (!descripcion) return;
+
+      const title = compuesto
+        ? `Error en ${compuesto}` + (sistema ? ` (${sistema})` : '')
+        : 'Reporte de error';
+
+      let body = '## Descripción del error\n' + descripcion + '\n';
+      if (compuesto) body += '\n**Compuesto:** `' + compuesto + '`\n';
+      if (sistema) body += '**Sistema:** ' + sistema + '\n';
+      body += '\n---\n*Reportado desde la app*';
+
+      const url = 'https://github.com/FrancoMal/nomenclador-quimico/issues/new'
+        + '?title=' + encodeURIComponent(title)
+        + '&body=' + encodeURIComponent(body)
+        + '&labels=' + encodeURIComponent('bug');
+
+      window.open(url, '_blank');
+      modalReporte.classList.add('hidden');
+      formReporte.reset();
+    });
+  }
 }
 
 // =============================================================================
