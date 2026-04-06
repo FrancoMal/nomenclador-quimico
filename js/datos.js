@@ -252,7 +252,7 @@ export const ELEMENTOS = {
     valencias: [2, 4, 6],
     valenciasNegativas: [-2],
     tipo: 'no_metal',
-    raizAcida: 'sulfur',
+    raizAcida: 'sulf',
     raizOxoacido: { 2: 'hiposulfuroso', 4: 'sulfuroso', 6: 'sulfúrico' }
   },
   Se: {
