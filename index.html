@@ -286,42 +286,8 @@
   <footer class="footer">
     <p>Nomenclador Químico &mdash; Practica y aprende</p>
     <p><a href="https://github.com/FrancoMal" target="_blank" rel="noopener noreferrer">@FrancoMal</a></p>
-    <p><button id="btn-abrir-reporte" class="report-link" type="button">🐛 Reportar un error</button></p>
+    <p><a href="https://forms.gle/LXsLSzfJxwyAQEqF8" target="_blank" rel="noopener noreferrer" class="report-link">🐛 Reportar un error</a></p>
   </footer>
-
-  <!-- ═══════════════════════════════════════════ -->
-  <!-- MODAL DE REPORTE DE ERROR                   -->
-  <!-- ═══════════════════════════════════════════ -->
-  <div id="modal-reporte" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="reporte-titulo">
-    <div class="modal modal--report">
-      <h2 id="reporte-titulo" class="modal__title">Reportar un error</h2>
-      <p class="modal__subtitle">Se abrirá un issue en GitHub con los datos que completes.</p>
-      <form id="form-reporte" class="report-form">
-        <div class="form-field">
-          <label for="reporte-compuesto">Compuesto / Fórmula</label>
-          <input type="text" id="reporte-compuesto" placeholder="Ej: Fe2O3, NaOH..." autocomplete="off">
-        </div>
-        <div class="form-field">
-          <label for="reporte-sistema">Sistema de nomenclatura</label>
-          <select id="reporte-sistema">
-            <option value="">-- Seleccionar --</option>
-            <option value="Sistemática">Sistemática</option>
-            <option value="Stock">Stock</option>
-            <option value="Tradicional">Tradicional</option>
-            <option value="No sé">No sé / No aplica</option>
-          </select>
-        </div>
-        <div class="form-field">
-          <label for="reporte-descripcion">¿Qué pasó? <span class="required">*</span></label>
-          <textarea id="reporte-descripcion" rows="3" placeholder="Ej: La respuesta correcta debería ser..." required></textarea>
-        </div>
-        <div class="modal__actions">
-          <button type="button" id="btn-cerrar-reporte" class="btn btn--secondary">Cancelar</button>
-          <button type="submit" class="btn btn--primary">Enviar reporte</button>
-        </div>
-      </form>
-    </div>
-  </div>
 
   <script type="module" src="js/app.js"></script>
 </body>
