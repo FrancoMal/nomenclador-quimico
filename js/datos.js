@@ -330,7 +330,10 @@ export const TIPOS_COMPUESTO = {
   HIDRACIDO: 'hidracido',               // H + (F,Cl,Br,I,S,Se,Te)
   HIDROXIDO: 'hidroxido',               // Metal + OH
   SAL_BINARIA: 'sal_binaria',           // Metal + No metal
-  OXOACIDO: 'oxoacido'                  // H + No metal + O
+  OXOACIDO: 'oxoacido',                 // H + No metal + O
+  HIDRURO_NO_METALICO: 'hidruro_no_metalico', // H + no metal (estado gaseoso)
+  OXOSAL: 'oxosal',                     // Metal + No metal + O (sal ternaria)
+  OXOSAL_ACIDA: 'oxosal_acida'          // Metal + H + No metal + O (sal cuaternaria)
 };
 
 /**
@@ -341,13 +344,13 @@ export const DIFICULTAD = {
     nombre: 'Fácil',
     metales: ['Na', 'K', 'Ca', 'Mg', 'Al', 'Li', 'Ba', 'Ag', 'Zn'],
     noMetales: ['O', 'Cl', 'S', 'F', 'Br', 'N'],
-    tipos: ['oxido_basico', 'oxido_acido', 'hidruro_metalico', 'hidracido', 'hidroxido']
+    tipos: ['oxido_basico', 'oxido_acido', 'hidruro_metalico', 'hidracido', 'hidroxido', 'hidruro_no_metalico']
   },
   MEDIO: {
     nombre: 'Medio',
     metales: ['Na', 'K', 'Ca', 'Mg', 'Al', 'Fe', 'Cu', 'Ag', 'Zn', 'Ba', 'Pb', 'Sn'],
     noMetales: ['O', 'Cl', 'S', 'F', 'Br', 'I', 'N', 'P'],
-    tipos: ['oxido_basico', 'oxido_acido', 'hidruro_metalico', 'hidracido', 'hidroxido', 'sal_binaria']
+    tipos: ['oxido_basico', 'oxido_acido', 'hidruro_metalico', 'hidracido', 'hidroxido', 'sal_binaria', 'hidruro_no_metalico', 'oxosal']
   },
   DIFICIL: {
     nombre: 'Difícil',
@@ -362,57 +365,57 @@ export const DIFICULTAD = {
  */
 export const OXOACIDOS = [
   // Ácidos del carbono
-  { formula: 'H2CO3', h: 2, noMetal: 'C', o: 3, valencia: 4, tradicional: 'ácido carbónico' },
+  { formula: 'H2CO3', h: 2, noMetal: 'C', o: 3, valencia: 4, tradicional: 'ácido carbónico', nombreSal: 'carbonato' },
 
   // Ácidos del nitrógeno
-  { formula: 'HNO2', h: 1, noMetal: 'N', o: 2, valencia: 3, tradicional: 'ácido nitroso' },
-  { formula: 'HNO3', h: 1, noMetal: 'N', o: 3, valencia: 5, tradicional: 'ácido nítrico' },
+  { formula: 'HNO2', h: 1, noMetal: 'N', o: 2, valencia: 3, tradicional: 'ácido nitroso', nombreSal: 'nitrito' },
+  { formula: 'HNO3', h: 1, noMetal: 'N', o: 3, valencia: 5, tradicional: 'ácido nítrico', nombreSal: 'nitrato' },
 
   // Ácidos del azufre
-  { formula: 'H2SO2', h: 2, noMetal: 'S', o: 2, valencia: 2, tradicional: 'ácido hiposulfuroso' },
-  { formula: 'H2SO3', h: 2, noMetal: 'S', o: 3, valencia: 4, tradicional: 'ácido sulfuroso' },
-  { formula: 'H2SO4', h: 2, noMetal: 'S', o: 4, valencia: 6, tradicional: 'ácido sulfúrico' },
+  { formula: 'H2SO2', h: 2, noMetal: 'S', o: 2, valencia: 2, tradicional: 'ácido hiposulfuroso', nombreSal: 'hiposulfito' },
+  { formula: 'H2SO3', h: 2, noMetal: 'S', o: 3, valencia: 4, tradicional: 'ácido sulfuroso', nombreSal: 'sulfito' },
+  { formula: 'H2SO4', h: 2, noMetal: 'S', o: 4, valencia: 6, tradicional: 'ácido sulfúrico', nombreSal: 'sulfato' },
 
   // Ácidos del cloro
-  { formula: 'HClO', h: 1, noMetal: 'Cl', o: 1, valencia: 1, tradicional: 'ácido hipocloroso' },
-  { formula: 'HClO2', h: 1, noMetal: 'Cl', o: 2, valencia: 3, tradicional: 'ácido cloroso' },
-  { formula: 'HClO3', h: 1, noMetal: 'Cl', o: 3, valencia: 5, tradicional: 'ácido clórico' },
-  { formula: 'HClO4', h: 1, noMetal: 'Cl', o: 4, valencia: 7, tradicional: 'ácido perclórico' },
+  { formula: 'HClO', h: 1, noMetal: 'Cl', o: 1, valencia: 1, tradicional: 'ácido hipocloroso', nombreSal: 'hipoclorito' },
+  { formula: 'HClO2', h: 1, noMetal: 'Cl', o: 2, valencia: 3, tradicional: 'ácido cloroso', nombreSal: 'clorito' },
+  { formula: 'HClO3', h: 1, noMetal: 'Cl', o: 3, valencia: 5, tradicional: 'ácido clórico', nombreSal: 'clorato' },
+  { formula: 'HClO4', h: 1, noMetal: 'Cl', o: 4, valencia: 7, tradicional: 'ácido perclórico', nombreSal: 'perclorato' },
 
   // Ácidos del bromo
-  { formula: 'HBrO', h: 1, noMetal: 'Br', o: 1, valencia: 1, tradicional: 'ácido hipobromoso' },
-  { formula: 'HBrO2', h: 1, noMetal: 'Br', o: 2, valencia: 3, tradicional: 'ácido bromoso' },
-  { formula: 'HBrO3', h: 1, noMetal: 'Br', o: 3, valencia: 5, tradicional: 'ácido brómico' },
-  { formula: 'HBrO4', h: 1, noMetal: 'Br', o: 4, valencia: 7, tradicional: 'ácido perbrómico' },
+  { formula: 'HBrO', h: 1, noMetal: 'Br', o: 1, valencia: 1, tradicional: 'ácido hipobromoso', nombreSal: 'hipobromito' },
+  { formula: 'HBrO2', h: 1, noMetal: 'Br', o: 2, valencia: 3, tradicional: 'ácido bromoso', nombreSal: 'bromito' },
+  { formula: 'HBrO3', h: 1, noMetal: 'Br', o: 3, valencia: 5, tradicional: 'ácido brómico', nombreSal: 'bromato' },
+  { formula: 'HBrO4', h: 1, noMetal: 'Br', o: 4, valencia: 7, tradicional: 'ácido perbrómico', nombreSal: 'perbromato' },
 
   // Ácidos del yodo
-  { formula: 'HIO', h: 1, noMetal: 'I', o: 1, valencia: 1, tradicional: 'ácido hipoyodoso' },
-  { formula: 'HIO3', h: 1, noMetal: 'I', o: 3, valencia: 5, tradicional: 'ácido yódico' },
-  { formula: 'HIO4', h: 1, noMetal: 'I', o: 4, valencia: 7, tradicional: 'ácido peryódico' },
+  { formula: 'HIO', h: 1, noMetal: 'I', o: 1, valencia: 1, tradicional: 'ácido hipoyodoso', nombreSal: 'hipoyodito' },
+  { formula: 'HIO3', h: 1, noMetal: 'I', o: 3, valencia: 5, tradicional: 'ácido yódico', nombreSal: 'yodato' },
+  { formula: 'HIO4', h: 1, noMetal: 'I', o: 4, valencia: 7, tradicional: 'ácido peryódico', nombreSal: 'peryodato' },
 
   // Ácidos del fósforo
-  { formula: 'H3PO3', h: 3, noMetal: 'P', o: 3, valencia: 3, tradicional: 'ácido fosforoso' },
-  { formula: 'H3PO4', h: 3, noMetal: 'P', o: 4, valencia: 5, tradicional: 'ácido fosfórico' },
+  { formula: 'H3PO3', h: 3, noMetal: 'P', o: 3, valencia: 3, tradicional: 'ácido fosforoso', nombreSal: 'fosfito' },
+  { formula: 'H3PO4', h: 3, noMetal: 'P', o: 4, valencia: 5, tradicional: 'ácido fosfórico', nombreSal: 'fosfato' },
 
   // Ácidos del boro
-  { formula: 'H3BO3', h: 3, noMetal: 'B', o: 3, valencia: 3, tradicional: 'ácido bórico' },
+  { formula: 'H3BO3', h: 3, noMetal: 'B', o: 3, valencia: 3, tradicional: 'ácido bórico', nombreSal: 'borato' },
 
   // Ácidos del silicio
-  { formula: 'H2SiO3', h: 2, noMetal: 'Si', o: 3, valencia: 4, tradicional: 'ácido silícico' },
+  { formula: 'H2SiO3', h: 2, noMetal: 'Si', o: 3, valencia: 4, tradicional: 'ácido silícico', nombreSal: 'silicato' },
 
   // Ácidos del selenio
-  { formula: 'H2SeO3', h: 2, noMetal: 'Se', o: 3, valencia: 4, tradicional: 'ácido selenioso' },
-  { formula: 'H2SeO4', h: 2, noMetal: 'Se', o: 4, valencia: 6, tradicional: 'ácido selénico' },
+  { formula: 'H2SeO3', h: 2, noMetal: 'Se', o: 3, valencia: 4, tradicional: 'ácido selenioso', nombreSal: 'selenito' },
+  { formula: 'H2SeO4', h: 2, noMetal: 'Se', o: 4, valencia: 6, tradicional: 'ácido selénico', nombreSal: 'selenato' },
 
   // Ácidos del teluro
-  { formula: 'H2TeO3', h: 2, noMetal: 'Te', o: 3, valencia: 4, tradicional: 'ácido teluroso' },
-  { formula: 'H2TeO4', h: 2, noMetal: 'Te', o: 4, valencia: 6, tradicional: 'ácido telúrico' },
+  { formula: 'H2TeO3', h: 2, noMetal: 'Te', o: 3, valencia: 4, tradicional: 'ácido teluroso', nombreSal: 'telurito' },
+  { formula: 'H2TeO4', h: 2, noMetal: 'Te', o: 4, valencia: 6, tradicional: 'ácido telúrico', nombreSal: 'telurato' },
 
   // Ácidos del manganeso (casos especiales — metal que forma oxoácidos)
-  { formula: 'H2MnO4', h: 2, noMetal: 'Mn', o: 4, valencia: 6, tradicional: 'ácido mangánico' },
-  { formula: 'HMnO4', h: 1, noMetal: 'Mn', o: 4, valencia: 7, tradicional: 'ácido permangánico' },
+  { formula: 'H2MnO4', h: 2, noMetal: 'Mn', o: 4, valencia: 6, tradicional: 'ácido mangánico', nombreSal: 'manganato' },
+  { formula: 'HMnO4', h: 1, noMetal: 'Mn', o: 4, valencia: 7, tradicional: 'ácido permangánico', nombreSal: 'permanganato' },
 
   // Ácidos del cromo (casos especiales — metal que forma oxoácidos)
-  { formula: 'H2CrO4', h: 2, noMetal: 'Cr', o: 4, valencia: 6, tradicional: 'ácido crómico' },
-  { formula: 'H2Cr2O7', h: 2, noMetal: 'Cr', o: 7, valencia: 6, tradicional: 'ácido dicrómico', esDicromico: true }
+  { formula: 'H2CrO4', h: 2, noMetal: 'Cr', o: 4, valencia: 6, tradicional: 'ácido crómico', nombreSal: 'cromato' },
+  { formula: 'H2Cr2O7', h: 2, noMetal: 'Cr', o: 7, valencia: 6, tradicional: 'ácido dicrómico', esDicromico: true, nombreSal: 'dicromato' }
 ];

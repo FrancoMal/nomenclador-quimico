@@ -308,8 +308,9 @@ function generarHidracido(noMetalesDisponibles) {
   const subH = Math.abs(valNegativa);   // 1 para halógenos, 2 para calcógenos
   const subX = 1;
 
-  const formula = construirFormula('H', subH, simbolo, subX);
-  const formulaHTML = formulaAHTML(formula);
+  const formulaBase = construirFormula('H', subH, simbolo, subX);
+  const formula = `${formulaBase}(ac)`;
+  const formulaHTML = formulaAHTML(formulaBase) + '<small>(ac)</small>';
 
   const raiz = elem.raizAcida;
 
@@ -326,6 +327,46 @@ function generarHidracido(noMetalesDisponibles) {
     formula,
     formulaHTML,
     tipo: TIPOS_COMPUESTO.HIDRACIDO,
+    nombres: { sistematica, stock, tradicional }
+  };
+}
+
+/**
+ * Genera un hidruro no metálico (H + halógeno/calcógeno en estado gaseoso)
+ */
+function generarHidruroNoMetalico(noMetalesDisponibles) {
+  // Mismos no metales que hidrácido: F, Cl, Br, I, S, Se, Te
+  const permitidos = ['F', 'Cl', 'Br', 'I', 'S', 'Se', 'Te'];
+  const candidatos = noMetalesDisponibles.filter(s => permitidos.includes(s));
+  if (candidatos.length === 0) return null;
+
+  const simbolo = elegirAleatorio(candidatos);
+  const elem = ELEMENTOS[simbolo];
+  const valNegativa = elem.valenciasNegativas[0]; // -1 o -2
+
+  // H^(+1) + X^(valNeg)
+  const subH = Math.abs(valNegativa);   // 1 para halógenos, 2 para calcógenos
+  const subX = 1;
+
+  const formulaBase = construirFormula('H', subH, simbolo, subX);
+  const formula = `${formulaBase}(g)`;
+  const formulaHTML = formulaAHTML(formulaBase) + '<small>(g)</small>';
+
+  const raiz = elem.raizAcida;
+
+  // --- Nomenclatura sistemática ---
+  const sistematica = `${raiz}uro de hidrógeno`;
+
+  // --- Stock (igual que sistemática) ---
+  const stock = sistematica;
+
+  // --- Nomenclatura tradicional (sin nombre de ácido en estado gaseoso) ---
+  const tradicional = `${raiz}uro de hidrógeno`;
+
+  return {
+    formula,
+    formulaHTML,
+    tipo: TIPOS_COMPUESTO.HIDRURO_NO_METALICO,
     nombres: { sistematica, stock, tradicional }
   };
 }
@@ -481,6 +522,189 @@ function generarOxoacido(noMetalesDisponibles, dificultad) {
 }
 
 
+/**
+ * Construye la representación textual del anión de un oxoácido.
+ * Ejemplo: SO4, NO3, ClO, Cr2O7 (caso especial dicrómico)
+ */
+function construirAnion(acido) {
+  if (acido.esDicromico) return 'Cr2O7';
+  return acido.noMetal + 'O' + (acido.o > 1 ? String(acido.o) : '');
+}
+
+/**
+ * Genera una oxosal (metal + no metal + O) — sal ternaria derivada de un oxoácido
+ */
+function generarOxosal(metalesDisponibles, noMetalesDisponibles, dificultad) {
+  // Filtrar oxoácidos según no metales disponibles (misma lógica que generarOxoacido)
+  const permitidos = noMetalesDisponibles || obtenerNoMetales();
+  const config = DIFICULTAD[dificultad] || DIFICULTAD.DIFICIL;
+  const metalesOxo = (config.metales === null)
+    ? ['Mn', 'Cr']
+    : config.metales.filter(s => ['Mn', 'Cr'].includes(s));
+  const elementosPermitidos = [...permitidos, ...metalesOxo];
+
+  const candidatos = OXOACIDOS.filter(acido => elementosPermitidos.includes(acido.noMetal));
+  if (candidatos.length === 0) return null;
+
+  const acido = elegirAleatorio(candidatos);
+
+  // Elegir un metal al azar
+  const simMetal = elegirAleatorio(metalesDisponibles);
+  const metal = ELEMENTOS[simMetal];
+  const valMetal = elegirAleatorio(metal.valencias);
+
+  // Carga del anión = -acido.h (tantas cargas negativas como hidrógenos tiene el ácido)
+  const cargaAnion = -acido.h;
+
+  // Cruzar valencias del metal con la carga del anión
+  const [subMetal, subAnion] = cruzarValencias(valMetal, cargaAnion);
+
+  // Construir el texto del anión
+  const anionText = construirAnion(acido);
+
+  // Construir fórmula
+  let formula;
+  const subMetalStr = subMetal > 1 ? String(subMetal) : '';
+  if (subAnion === 1) {
+    formula = `${simMetal}${subMetalStr}${anionText}`;
+  } else {
+    formula = `${simMetal}${subMetalStr}(${anionText})${subAnion}`;
+  }
+  const formulaHTML = formulaAHTML(formula);
+
+  // --- Nomenclatura sistemática (IUPAC) ---
+  // Patrón: [prefijo]oxo[raíz]ato([valencia del no metal]) de [metal]([valencia del metal])
+  const raiz = obtenerRaizSistematicaOxoacido(acido.noMetal);
+  const prefijoOxo = obtenerPrefijo(acido.o, false);
+  let parteAnion;
+  if (acido.esDicromico) {
+    parteAnion = `${prefijoOxo}oxodi${raiz}ato(${aRomano(acido.valencia)})`;
+  } else {
+    parteAnion = `${prefijoOxo}oxo${raiz}ato(${aRomano(acido.valencia)})`;
+  }
+  const tieneMultiplesValencias = metal.valencias.length > 1;
+  const parteMetal = tieneMultiplesValencias
+    ? `${metal.nombre}(${aRomano(valMetal)})`
+    : metal.nombre;
+  const sistematica = `${parteAnion} de ${parteMetal}`;
+
+  // --- Nomenclatura Stock ---
+  // nombreSal de metal(valencia)
+  const stockMetal = tieneMultiplesValencias
+    ? `${metal.nombre}(${aRomano(valMetal)})`
+    : metal.nombre;
+  const stock = `${acido.nombreSal} de ${stockMetal}`;
+
+  // --- Nomenclatura tradicional ---
+  // nombreSal + nombre tradicional del metal
+  const nombreTrad = metal.nombreTradicional[valMetal];
+  const tradicional = `${acido.nombreSal} ${nombreTrad}`;
+
+  return {
+    formula,
+    formulaHTML,
+    tipo: TIPOS_COMPUESTO.OXOSAL,
+    nombres: { sistematica, stock, tradicional }
+  };
+}
+
+/**
+ * Genera una oxosal ácida (metal + H + no metal + O) — sal cuaternaria derivada de un oxoácido poliprótico
+ */
+function generarOxosalAcida(metalesDisponibles, noMetalesDisponibles, dificultad) {
+  // Filtrar oxoácidos con h >= 2 (necesitan al menos 2 H para formar sal ácida)
+  const permitidos = noMetalesDisponibles || obtenerNoMetales();
+  const config = DIFICULTAD[dificultad] || DIFICULTAD.DIFICIL;
+  const metalesOxo = (config.metales === null)
+    ? ['Mn', 'Cr']
+    : config.metales.filter(s => ['Mn', 'Cr'].includes(s));
+  const elementosPermitidos = [...permitidos, ...metalesOxo];
+
+  const candidatos = OXOACIDOS.filter(acido =>
+    elementosPermitidos.includes(acido.noMetal) && acido.h >= 2
+  );
+  if (candidatos.length === 0) return null;
+
+  const acido = elegirAleatorio(candidatos);
+
+  // Elegir un metal al azar
+  const simMetal = elegirAleatorio(metalesDisponibles);
+  const metal = ELEMENTOS[simMetal];
+  const valMetal = elegirAleatorio(metal.valencias);
+
+  // Se quita exactamente 1 H: carga del anión = -1
+  const anionH = acido.h - 1; // hidrógenos restantes en el anión
+
+  // Cruzar valencias del metal con carga -1
+  // subMetal = 1, subAnion = valMetal
+  const [subMetal, subAnion] = cruzarValencias(valMetal, -1);
+
+  // Construir texto del anión: H(n) + noMetal + O(n)
+  let anionText;
+  if (acido.esDicromico) {
+    anionText = (anionH > 1 ? `H${anionH}` : 'H') + 'Cr2O7';
+  } else {
+    anionText = (anionH > 1 ? `H${anionH}` : 'H') + acido.noMetal + 'O' + (acido.o > 1 ? String(acido.o) : '');
+  }
+
+  // Construir fórmula
+  let formula;
+  const subMetalStr = subMetal > 1 ? String(subMetal) : '';
+  if (subAnion === 1) {
+    formula = `${simMetal}${subMetalStr}${anionText}`;
+  } else {
+    formula = `${simMetal}${subMetalStr}(${anionText})${subAnion}`;
+  }
+  const formulaHTML = formulaAHTML(formula);
+
+  // --- Nomenclatura sistemática (IUPAC) ---
+  // [prefijoH]hidrógeno[prefijoOxo]oxo[raíz]ato([valencia]) de [metal]([valenciaM])
+  const raiz = obtenerRaizSistematicaOxoacido(acido.noMetal);
+  const prefijoOxo = obtenerPrefijo(acido.o, false);
+  let parteAnionBase;
+  if (acido.esDicromico) {
+    parteAnionBase = `${prefijoOxo}oxodi${raiz}ato(${aRomano(acido.valencia)})`;
+  } else {
+    parteAnionBase = `${prefijoOxo}oxo${raiz}ato(${aRomano(acido.valencia)})`;
+  }
+  const prefijoHidrogeno = anionH > 1 ? obtenerPrefijo(anionH, false) : '';
+  const parteHidrogeno = `${prefijoHidrogeno}hidrógeno`;
+
+  const tieneMultiplesValencias = metal.valencias.length > 1;
+  const parteMetal = tieneMultiplesValencias
+    ? `${metal.nombre}(${aRomano(valMetal)})`
+    : metal.nombre;
+  const sistematica = `${parteHidrogeno}${parteAnionBase} de ${parteMetal}`;
+
+  // --- Nomenclatura Stock ---
+  // [prefijoH]hidrógeno[nombreSal] de [metal]([valencia])
+  const stockHPrefijo = anionH > 1 ? obtenerPrefijo(anionH, false) : '';
+  const stockMetal = tieneMultiplesValencias
+    ? `${metal.nombre}(${aRomano(valMetal)})`
+    : metal.nombre;
+  const stock = `${stockHPrefijo}hidrógeno${acido.nombreSal} de ${stockMetal}`;
+
+  // --- Nomenclatura tradicional ---
+  // Para 1 H restante: bi[nombreSal] [nombre tradicional del metal]
+  // Para 2+ H restantes: [prefijoH]hidrógeno[nombreSal] [nombre tradicional del metal]
+  const nombreTrad = metal.nombreTradicional[valMetal];
+  let tradicional;
+  if (anionH === 1) {
+    tradicional = `bi${acido.nombreSal} ${nombreTrad}`;
+  } else {
+    const tradHPrefijo = obtenerPrefijo(anionH, false);
+    tradicional = `${tradHPrefijo}hidrógeno${acido.nombreSal} ${nombreTrad}`;
+  }
+
+  return {
+    formula,
+    formulaHTML,
+    tipo: TIPOS_COMPUESTO.OXOSAL_ACIDA,
+    nombres: { sistematica, stock, tradicional }
+  };
+}
+
+
 // =============================================================================
 // FUNCIÓN PRINCIPAL DE GENERACIÓN
 // =============================================================================
@@ -516,6 +740,15 @@ export function generarCompuesto(tipo, dificultad = 'MEDIO') {
 
     case TIPOS_COMPUESTO.OXOACIDO:
       return generarOxoacido(noMetales, dificultad);
+
+    case TIPOS_COMPUESTO.HIDRURO_NO_METALICO:
+      return generarHidruroNoMetalico(noMetales);
+
+    case TIPOS_COMPUESTO.OXOSAL:
+      return generarOxosal(metales, noMetales, dificultad);
+
+    case TIPOS_COMPUESTO.OXOSAL_ACIDA:
+      return generarOxosalAcida(metales, noMetales, dificultad);
 
     default:
       console.warn(`Tipo de compuesto desconocido: ${tipo}`);
